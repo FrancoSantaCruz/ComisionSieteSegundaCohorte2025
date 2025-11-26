@@ -1,6 +1,14 @@
 from django.db import models
 
 # Create your models here.
+class Organizador(models.Model):
+    organizador_id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    correo = models.EmailField()
+
+    def __str__(self):
+        return self.nombre
+
 class Categoria(models.Model):
     categoria_id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
@@ -20,10 +28,7 @@ class Evento(models.Model):
     direccion = models.CharField(max_length=200)
     es_gratuito = models.BooleanField(default=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    organizador = models.ForeignKey(Organizador, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.titulo
-
-# 1 evento -> muchas categorias (1:N)
-# 1 categoria -> muchos eventos (1:N)
-# (n:m)
