@@ -1,80 +1,107 @@
 from django.shortcuts import render
 from .models import Evento, Categoria, Organizador
 
-# Create your views here. Obligame
+from .forms import EventoForm
+from django.shortcuts import redirect
 
-## CRUD
-### C.CREATE
-def crear_evento(request):
-    # Como recibir información desde el front
-    organizador_ejemplo = Organizador.objects.create(nombre="Roman Huel", correo="hroman@example.com")
+##########
+## CRUD ##
+##########
 
-    # categoria_uno = Categoria.objects.create(nombre="Tecnología", descripcion="Eventos tech")
-    # categoria_dos = Categoria.objects.create(nombre="Innovación", descripcion="Novedades del sector")
-
-    categoria_dos = Categoria.objects.get(categoria_id=2)
-
-    evento = Evento(
-        titulo = "Expo Agrimensura 2026",
-        descripcion = "Exposición agrimensura 2026",
-        fecha_inicio = "2026-12-01",
-        hora_inicio = "18:00:00",
-        hora_fin = "22:00:00",
-        direccion = "Av. Lavalle 123",
-        es_gratuito = False,
-        precio = 8000,
-        organizador = organizador_ejemplo,
-    )
-
-    evento.save()
-
-    evento.categoria.add(categoria_dos)
-
-    print("Se crearon los registros correctamente.")
-
-    #Como enviar el resultado al HTML y mostrarlo en el HTML. 
-    return render(request, 'crear_evento.html')
-
-### R.READ
+### FBV (Vistas Basadas en Funciones)
+# READ - GET
 def listar_eventos(request):
     todos_los_eventos = Evento.objects.all()
-    print(todos_los_eventos)
+    todas_las_categorias = Categoria.objects.all()
+    contexto = {
+        'eventos': todos_los_eventos,
+        'categorias': todas_las_categorias
+    }
+    return render(request, 'todos_los_eventos.html', contexto)
 
-    eventos_filtrados = Evento.objects.filter(titulo="Expo Agrimensura 2026")
+def detalle_evento(request, pk):
+    try:
+        un_evento = Evento.objects.get(evento_id=pk)
 
-    print(eventos_filtrados)
+        contexto = {
+            'evento': un_evento
+        }
 
-    return render(request, 'todos_los_eventos.html')
+        return render(request, 'detalle_evento.html', contexto)
+    except Evento.DoesNotExist:
+        contexto = {
+            'evento': None
+        }
+        return render(request, 'detalle_evento.html', contexto)
 
-def detalle_evento(request):
-    un_evento = Evento.objects.get(evento_id=1)
-    print(un_evento.evento_id)
-    print(un_evento.titulo)
-    print(un_evento.descripcion)
-    print(un_evento.direccion)
-    return render(request, 'detalle_evento.html')
-
-def modificar_evento(request):
-    # ID el evento
-    id_recibido = 2
-    # Los datos a modificar
-    titulo_recibido = "Expo Carpinteria 2026"
-    direccion_recibido = "Av. Castelli 1100"
-
-    evento_a_modificar = Evento.objects.get(evento_id=id_recibido)
-
-    evento_a_modificar.titulo = titulo_recibido
-    evento_a_modificar.direccion = direccion_recibido
-
-    evento_a_modificar.save()
-
-    return render(request, 'modificar_evento.html')
-
-def eliminar_evento(request):
-    id_recibido = 2
-
-    evento_a_eliminar = Evento.objects.get(evento_id=id_recibido)
+# CREATE - GET / POST
+def crear_evento(request):
+    if request.method == 'POST':
+        # POST -> Recibiendo información mediante un formulario
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_eventos')
+    else:
+        # GET -> Tengo que mostrar el formulario vacío
+        form = EventoForm()
     
-    evento_a_eliminar.delete()
+    return render(request, 'crear_evento.html', {'form': form})
+    
+# UPDATE - GET / POST
+def modificar_evento(request, pk):
+    evento_a_modificar = Evento.objects.get(evento_id=pk)
 
-    return render(request, 'eliminar_evento.html')
+    if request.method == 'POST':
+        form = EventoForm(request.POST, instance=evento_a_modificar)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_eventos')
+    else:
+        form = EventoForm(instance=evento_a_modificar)
+
+    return render(request, 'modificar_evento.html', {'form': form })
+
+# DELETE - GET / POST
+def eliminar_evento(request, pk):
+    evento_a_eliminar = Evento.objects.get(evento_id=pk)
+
+    if request.method == 'POST':
+        evento_a_eliminar.delete()
+        return redirect('listar_eventos')
+
+    return render(request, 'eliminar_evento.html', {'evento': evento_a_eliminar})
+
+
+### CBV (Vistas Basadas en Clases)
+
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+
+class ListarEventosView(ListView):
+    model = Evento
+    template_name = 'todos_los_eventos.html'
+    context_object_name = "eventos"
+
+class DetalleEventoView(DetailView):
+    model = Evento
+    template_name = 'detalle_evento.html'
+    context_object_name = "evento"
+
+class CrearEventoView(CreateView):
+    model = Evento
+    template_name = 'crear_evento.html'
+    form_class = EventoForm
+    success_url = reverse_lazy('listar_eventos')
+
+class ModificarEventoView(UpdateView):
+    model = Evento
+    template_name = 'modificar_evento.html'
+    form_class = EventoForm
+    success_url = reverse_lazy('listar_eventos')
+
+class EliminarEventoView(DeleteView):
+    model = Evento
+    template_name = 'eliminar_evento.html'
+    success_url = reverse_lazy('listar_eventos')

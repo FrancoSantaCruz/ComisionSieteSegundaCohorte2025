@@ -9,7 +9,6 @@
 
 <body>
     <header>
-        <h2>EDICION DEL EVENTO ✏️</h2>
         <nav>
             <ul>
                 <li><a href="/">VOLVER AL INICIO</a></li>
@@ -18,11 +17,13 @@
         </nav>
     </header>
     <main>
-        <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem voluptatibus, esse quae magnam, aliquam error
-            fugiat similique mollitia saepe, officiis tempore consectetur. Sunt eligendi, omnis iusto eius repellendus
-            ex modi.
-        </p>
+        <h2>EDICION DEL EVENTO ✏️</h2>
+        <hr>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Guardar Cambios</button>
+        </form>
     </main>
 </body>
 

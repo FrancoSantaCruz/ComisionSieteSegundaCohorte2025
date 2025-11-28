@@ -10,8 +10,26 @@
 <body>
     <h1>TODOS LOS EVENTOS 🎊</h1>
     <a href="/">VOLVER AL INICIO</a>
-    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Totam commodi error, obcaecati officiis molestias nihil
-        cum rerum cumque quo explicabo nulla ut repellat neque? Laudantium voluptates a perferendis autem cum?</p>
+
+    <nav>
+        <p>Filtrar por:</p>
+        <ul>
+            {% for cat in categorias %}
+            <li>{{cat.nombre}}</li>
+            {% endfor %}
+        </ul>
+    </nav>
+    <ul>
+        {% for even in eventos %}
+        <div>
+            <hr>
+            <a href="/eventos/un_evento/{{even.evento_id}}">
+                <h3>{{even.titulo}}</h3>
+            </a>
+            <p><strong>Descripción:</strong>{{even.descripcion}}</p>
+        </div>
+        {% endfor %}
+    </ul>
 </body>
 
 </html>
