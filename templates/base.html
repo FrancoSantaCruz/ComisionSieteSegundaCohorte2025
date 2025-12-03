@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %} {% endblock %}</title>
+</head>
+
+<body>
+    <header style="background-color: lightblue;">
+        <hr>
+        <nav>
+            <ul>
+                <li><a href="{% url 'inicio' %}">inicio</a></li>
+                <li><a href="{% url 'apps.eventos:listar_eventos' %}">eventos</a></li>
+                <li><a href="{% url 'apps.eventos:crear_evento' %}">crear evento</a></li>
+            </ul>
+        </nav>
+        <hr>
+    </header>
+    <main>
+        <!-- Bloque amarillo -->
+        {% block contenido %}
+
+
+
+
+        {% endblock %}
+    </main>
+    <footer style="background-color: lightblue;">
+        <hr>
+        <h4>INFORMATORIO</h4>
+        <strong>Etapa 2 - Comision 7</strong>
+        <br>
+        <small>Segunda Cohorte 2025</small>
+        <hr>
+    </footer>
+</body>
+
+</html>

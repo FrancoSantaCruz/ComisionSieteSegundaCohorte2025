@@ -10,9 +10,25 @@ from django.shortcuts import redirect
 
 ### FBV (Vistas Basadas en Funciones)
 # READ - GET
+
+# https://www.youtube.com/results?search_query=informatorio
+# https://su-pagina.com/path/?parametro=valor&parametro=valor&parametro=valor
+# https://su-pagina.com/path/
+# https://localhost:8000/path/?parametro=valor
+
 def listar_eventos(request):
     todos_los_eventos = Evento.objects.all()
     todas_las_categorias = Categoria.objects.all()
+
+    param_categoria = request.GET.get("categoria", "").strip()
+    param_titulo = request.GET.get("titulo", "").strip()
+
+    if param_categoria:
+        todos_los_eventos = todos_los_eventos.filter(categoria__nombre__icontains=param_categoria)
+
+    if param_titulo:
+        todos_los_eventos = todos_los_eventos.filter(titulo__icontains=param_titulo)
+
     contexto = {
         'eventos': todos_los_eventos,
         'categorias': todas_las_categorias
@@ -50,6 +66,9 @@ def crear_evento(request):
     
 # UPDATE - GET / POST
 def modificar_evento(request, pk):
+    # 1) Que evento queremos modificar (tiene que ser un evento existente)
+    # 2) Que campos queremos modificar
+    # 3) "Esta es la descripcion" -> visualizar los datos guardados al momento de modificar
     evento_a_modificar = Evento.objects.get(evento_id=pk)
 
     if request.method == 'POST':
@@ -64,6 +83,7 @@ def modificar_evento(request, pk):
 
 # DELETE - GET / POST
 def eliminar_evento(request, pk):
+    # 1) Que evento queremos eliminar (tiene que ser un evento existente)
     evento_a_eliminar = Evento.objects.get(evento_id=pk)
 
     if request.method == 'POST':

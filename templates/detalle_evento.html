@@ -1,39 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block titulo %} COM7 | DETALLE {% endblock%}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DETALLE 🔎</title>
-</head>
 
-<body>
-    <header>
-        <h2>DETALLE DEL EVENTO 🔎</h2>
-        <nav>
-            <ul>
-                <li><a href="/">VOLVER AL INICIO</a></li>
-                <li><a href="/eventos">VER TODOS LOS EVENTOS</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <hr>
-        {% if evento %}
-        <div>
-            <p><strong>Título: </strong>{{evento.titulo}} <strong>| Organizador por:</strong> {{evento.organizador}}</p>
-            <p><strong>Descripcion:</strong> {{evento.descripcion}}</p>
-            <p><strong>Fecha de inicio:</strong> {{evento.fecha_inicio}} a las {{evento.hora_inicio}}</p>
-            <p><strong>Finaliza a las:</strong> {{evento.hora_fin}}</p>
-            <p><strong>Direccion:</strong> {{evento.direccion}}</p>
-            <p><strong>Es gratuito:</strong> {{evento.es_gratuito}}</p>
-            <p><strong>Precio:</strong> {{evento.precio}}</p>
-        </div>
-        {% else %}
-        <h2>EL EVENTO NO EXISTE 😭</h2>
-        {% endif %}
+{% block contenido %}
+<h2>DETALLE DEL EVENTO 🔎</h2>
+<br>
+{% if evento %}
+<div style="background-color: lightslategray;">
+    <hr>
+    <a href="{% url 'apps.eventos:modificar_evento' evento.evento_id %}">Editar 📝</a>
+    <a href="{% url 'apps.eventos:eliminar_evento' evento.evento_id %}">Eliminar 🗑️</a>
+    <hr>
+</div>
+<div>
+    <p><strong>Título: </strong>{{evento.titulo}} <strong>| Organizador por:</strong> {{evento.organizador}}</p>
+    <p><strong>Descripcion: </strong> {{evento.descripcion}}</p>
+    <p><strong>Fecha de inicio: </strong> {{evento.fecha_inicio|date:"j F Y"}} a las {{evento.hora_inicio}}</p>
+    <p><strong>Finaliza a las: </strong> {{evento.hora_fin}}</p>
+    <p><strong>Direccion: </strong> {{evento.direccion}}</p>
+    <p><strong>Es gratuito: </strong> {{evento.es_gratuito}}</p>
+    <p><strong>Precio: </strong> {{evento.precio}}</p>
+</div>
+{% else %}
+<h2>EL EVENTO NO EXISTE 😭</h2>
+{% endif %}
 
-    </main>
-</body>
-
-</html>
+{% endblock%}

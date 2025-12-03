@@ -13,6 +13,8 @@ from .views import (
     EliminarEventoView
     )
 
+app_name = "apps.eventos"
+
 urlpatterns = [
 
     # http://localhost:8000/eventos/

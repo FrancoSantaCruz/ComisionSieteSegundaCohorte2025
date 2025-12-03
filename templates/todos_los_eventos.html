@@ -1,35 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVENTOS 🎊</title>
-</head>
+{% block titulo %} COM7 | EVENTOS 🎊{% endblock %}
 
-<body>
-    <h1>TODOS LOS EVENTOS 🎊</h1>
-    <a href="/">VOLVER AL INICIO</a>
-
-    <nav>
-        <p>Filtrar por:</p>
-        <ul>
-            {% for cat in categorias %}
-            <li>{{cat.nombre}}</li>
-            {% endfor %}
-        </ul>
-    </nav>
+{% block contenido %}
+<h2>TODOS LOS EVENTOS 🎊</h2>
+<br>
+<section>
+    <p>Filtrar por categorias:</p>
     <ul>
-        {% for even in eventos %}
-        <div>
-            <hr>
-            <a href="/eventos/un_evento/{{even.evento_id}}">
-                <h3>{{even.titulo}}</h3>
-            </a>
-            <p><strong>Descripción:</strong>{{even.descripcion}}</p>
-        </div>
+        <a href="/eventos/">
+            <li>Todos</li>
+        </a>
+        {% for cat in categorias %}
+        <a href="/eventos/?categoria={{cat.nombre}}">
+            <li>{{cat.nombre}}</li>
+        </a>
         {% endfor %}
     </ul>
-</body>
+</section>
+<section>
+    {% for even in eventos %}
+    <div>
+        <hr>
+        <a href="/eventos/un_evento/{{even.evento_id}}">
+            <h3>{{even.titulo}}</h3>
+        </a>
+        <p><strong>Descripción:</strong>{{even.descripcion|truncatechars:100}}</p>
+    </div>
+    {% endfor %}
+</section>
 
-</html>
+{% endblock %}
