@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Evento, Categoria
+from .models import Evento, Categoria, Organizador
 
 # Register your models here.
 
@@ -13,5 +13,6 @@ class EventoAdmin(admin.ModelAdmin):
     list_filter = ('fecha_inicio',)
 
 
+admin.site.register(Organizador)
 admin.site.register(Categoria)
 admin.site.register(Evento, EventoAdmin)

@@ -1,3 +1,5 @@
+{% load grupos %}
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -12,9 +14,27 @@
         <hr>
         <nav>
             <ul>
+                {% if user.is_staff %}
+                    <li><a href="{% url 'admin:index' %}">Ir al admin</a></li>
+                {% endif %}
+
                 <li><a href="{% url 'inicio' %}">inicio</a></li>
                 <li><a href="{% url 'apps.eventos:listar_eventos' %}">eventos</a></li>
+
+                {% if user|has_group:"colaborador" %}
                 <li><a href="{% url 'apps.eventos:crear_evento' %}">crear evento</a></li>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <li>
+                        <img src="{{user.imagen.url}}" style="width: 16px; height: 16px;">
+                        <strong>Hola {{user.username}}!</strong>
+                    </li>
+                    <li><a href="{% url 'apps.autenticacion:cerrar_sesion' %}">Cerrar sesión</a></li>
+                {% else %}
+                    <li><a href="{% url 'apps.autenticacion:ingresar' %}">Ingresar</a></li>
+                    <li><a href="{% url 'apps.autenticacion:registrar' %}">Registrate</a></li>
+                {% endif%}
             </ul>
         </nav>
         <hr>

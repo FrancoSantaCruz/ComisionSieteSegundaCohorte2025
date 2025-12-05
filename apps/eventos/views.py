@@ -35,6 +35,9 @@ def listar_eventos(request):
     }
     return render(request, 'todos_los_eventos.html', contexto)
 
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='apps.autenticacion:ingresar')
 def detalle_evento(request, pk):
     try:
         un_evento = Evento.objects.get(evento_id=pk)
@@ -50,21 +53,25 @@ def detalle_evento(request, pk):
         }
         return render(request, 'detalle_evento.html', contexto)
 
-# CREATE - GET / POST
+from django.contrib.auth.decorators import user_passes_test
+
+def es_colaborador(user):
+    return user.groups.filter(name="colaborador").exists()
+
+@user_passes_test(es_colaborador)
 def crear_evento(request):
     if request.method == 'POST':
         # POST -> Recibiendo información mediante un formulario
         form = EventoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('listar_eventos')
+            return redirect('apps.eventos:listar_eventos')
     else:
         # GET -> Tengo que mostrar el formulario vacío
         form = EventoForm()
     
     return render(request, 'crear_evento.html', {'form': form})
     
-# UPDATE - GET / POST
 def modificar_evento(request, pk):
     # 1) Que evento queremos modificar (tiene que ser un evento existente)
     # 2) Que campos queremos modificar
@@ -75,20 +82,22 @@ def modificar_evento(request, pk):
         form = EventoForm(request.POST, instance=evento_a_modificar)
         if form.is_valid():
             form.save()
-            return redirect('listar_eventos')
+            return redirect('apps.eventos:listar_eventos')
     else:
         form = EventoForm(instance=evento_a_modificar)
 
     return render(request, 'modificar_evento.html', {'form': form })
 
-# DELETE - GET / POST
+from django.contrib.auth.decorators import permission_required
+
+@permission_required('eventos.delete_evento', raise_exception=True)
 def eliminar_evento(request, pk):
     # 1) Que evento queremos eliminar (tiene que ser un evento existente)
     evento_a_eliminar = Evento.objects.get(evento_id=pk)
 
     if request.method == 'POST':
         evento_a_eliminar.delete()
-        return redirect('listar_eventos')
+        return redirect('apps.eventos:listar_eventos')
 
     return render(request, 'eliminar_evento.html', {'evento': evento_a_eliminar})
 
